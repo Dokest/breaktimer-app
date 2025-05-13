@@ -1,6 +1,6 @@
 > [!NOTE]
-> This is a fork that I made for a friend. \
-> It includes the possibility to have cycling messages on each break. \
+> This is a fork I made for a friend. \
+> It includes the cycling messages on each break. \
 > It also reduces the duration of the snooze time to two (2) seconds.
 >
 > Thanks to [Tom James Watson](https://github.com/tom-james-watson) and
