@@ -5,7 +5,7 @@ import { animated, config, useSpring } from "react-spring";
 import { Settings, SoundType } from "../../types/settings";
 import styles from "./Break.scss";
 
-const COUNTDOWN_SECS = 10;
+const COUNTDOWN_SECS = 2;
 const TICK_MS = 200;
 
 function createRgba(hex: string, a: number) {
@@ -249,6 +249,9 @@ export default function Break() {
     backdropOpacity: 0,
   }));
 
+  const [breakTitle, setBreakTitle] = React.useState("Something went wrong");
+  const [breakMessage, setBreakMessage] = React.useState("Something went wrong");
+
   React.useEffect(() => {
     const init = async () => {
       const [allowPostpone, settings] = await Promise.all([
@@ -273,6 +276,14 @@ export default function Break() {
       ) {
         setCountingDown(false);
       }
+
+	  const params = new URLSearchParams(window.location.search);
+
+	  const titleIndex = Number.parseInt(params.get("titleIndex") ?? "0");
+	  const messageIndex = Number.parseInt(params.get("messageIndex") ?? "0");
+
+      setBreakTitle(settings.breakTitle[titleIndex]);
+	  setBreakMessage(settings.breakMessage[messageIndex]);
 
       setReady(true);
     };
@@ -352,7 +363,7 @@ export default function Break() {
           <>
             {countingDown ? (
               <BreakCountdown
-                breakTitle={settings.breakTitle}
+                breakTitle={breakTitle}
                 onCountdownOver={handleCountdownOver}
                 onPostponeBreak={handlePostponeBreak}
                 onSkipBreak={handleSkipBreak}
@@ -364,7 +375,7 @@ export default function Break() {
               />
             ) : (
               <BreakProgress
-                breakMessage={settings.breakMessage}
+                breakMessage={breakMessage}
                 endBreakEnabled={settings.endBreakEnabled}
                 onEndBreak={handleEndBreak}
                 settings={settings}

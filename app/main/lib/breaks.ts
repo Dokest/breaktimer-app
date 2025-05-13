@@ -123,13 +123,22 @@ export function postponeBreak(): void {
   createBreak(true);
 }
 
+let titleIndex = 0;
+let messageIndex = 0;
+
 function doBreak(): void {
   havingBreak = true;
 
   const settings: Settings = getSettings();
 
+  titleIndex = (titleIndex + 1) % settings.breakTitle.length;
+  messageIndex = (messageIndex + 1) % settings.breakMessage.length;
+
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification(settings.breakTitle, settings.breakMessage);
+    const breakTitle = settings.breakTitle[titleIndex];
+    const breakMessage = settings.breakMessage[messageIndex];
+
+    showNotification(breakTitle, breakMessage);
     if (settings.soundType !== SoundType.None) {
       sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
     }
@@ -138,7 +147,7 @@ function doBreak(): void {
   }
 
   if (settings.notificationType === NotificationType.Popup) {
-    createBreakWindows();
+    createBreakWindows(titleIndex, messageIndex);
   }
 }
 

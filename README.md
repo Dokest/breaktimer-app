@@ -1,3 +1,12 @@
+> [!NOTE]
+> This is a fork that I made for a friend. \
+> It includes the possibility to have cycling messages on each break. \
+> It also reduces the duration of the snooze time to two (2) seconds.
+>
+> Thanks to [Tom James Watson](https://github.com/tom-james-watson) and
+> [the contributors](https://github.com/tom-james-watson/breaktimer-app/graphs/contributors) of the original project! \
+> (I am not a React dev and I don't consider the changes relevant enough to be included in the original project).
+
 # BreakTimer App - https://breaktimer.app
 
 ![](https://img.shields.io/github/downloads/tom-james-watson/breaktimer-app/total?logo=github&style=social)

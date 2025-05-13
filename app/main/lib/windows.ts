@@ -77,7 +77,7 @@ export function createSoundsWindow(): void {
   soundsWindow.loadURL(getBrowserWindowUrl("sounds"));
 }
 
-export function createBreakWindows(): void {
+export function createBreakWindows(titleIndex: number, messageIndex: number): void {
   const settings = getSettings();
 
   const displays = screen.getAllDisplays();
@@ -112,7 +112,7 @@ export function createBreakWindows(): void {
       app.dock.hide();
     }
 
-    breakWindow.loadURL(getBrowserWindowUrl("break"));
+    breakWindow.loadURL(getBrowserWindowUrl("break") + `&titleIndex=${titleIndex}&messageIndex=${messageIndex}`);
 
     breakWindow.on("ready-to-show", () => {
       if (!breakWindow) {

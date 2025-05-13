@@ -38,6 +38,8 @@ export default function SettingsEl() {
   const [showAdvancedAppearance, setShowAdvanedAppearance] =
     React.useState(false);
 
+  const [isDirtyFromArrays, setIsDirtyFromArrays] = React.useState(false);
+
   React.useEffect(() => {
     window
       .matchMedia("(prefers-color-scheme: dark)")
@@ -60,6 +62,42 @@ export default function SettingsEl() {
 
   if (settings === null || settingsDraft === null) {
     return null;
+  }
+
+  if (typeof settingsDraft.breakTitle === "string") {
+    settingsDraft.breakTitle = [settingsDraft.breakTitle];
+  }
+
+  if (typeof settings.breakTitle === "string") {
+    settingsDraft.breakTitle = [settings.breakTitle];
+  }
+
+  if (typeof settingsDraft.breakMessage === "string") {
+    settingsDraft.breakMessage = [settingsDraft.breakMessage];
+  }
+
+  if (typeof settings.breakMessage === "string") {
+    settingsDraft.breakMessage = [settings.breakMessage];
+  }
+
+  const addTitleMessage = (key: "breakTitle" | "breakMessage") => {
+    settingsDraft[key].push("");
+
+    setIsDirtyFromArrays(true);
+
+    setSettingsDraft({ ...settingsDraft, [key]: settingsDraft[key] });
+  }
+
+  const removeMessage = (key: "breakTitle" | "breakMessage") => {
+	if (settingsDraft[key].length <= 1) {
+		return;
+	}
+
+    settingsDraft[key].pop();
+
+    setIsDirtyFromArrays(true);
+
+    setSettingsDraft({ ...settingsDraft, [key]: settingsDraft[key] });
   }
 
   const handleNotificationTypeChange = (
@@ -90,6 +128,27 @@ export default function SettingsEl() {
     setSettingsDraft({
       ...settingsDraft,
       [field]: e.target.value,
+    });
+  };
+
+const handleTextChangeArray = (
+    field: "breakTitle" | "breakMessage",
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    let currentValue = settingsDraft[field];
+
+    if (typeof currentValue === "string") {
+        currentValue = [currentValue];
+    }
+
+    currentValue[index] = e.target.value;
+
+    setIsDirtyFromArrays(true);
+
+    setSettingsDraft({
+      ...settingsDraft,
+      [field]: currentValue,
     });
   };
 
@@ -136,7 +195,7 @@ export default function SettingsEl() {
       <SettingsHeader
         backgroundColor={settingsDraft.backgroundColor}
         handleSave={handleSave}
-        showSave={dirty}
+        showSave={dirty || isDirtyFromArrays}
         textColor={settingsDraft.textColor}
       />
       <main className={settingsClassName}>
@@ -315,20 +374,33 @@ export default function SettingsEl() {
               panel={
                 <>
                   <FormGroup label="Break title">
-                    <InputGroup
-                      id="break-title"
-                      value={settingsDraft.breakTitle}
-                      onChange={handleTextChange.bind(null, "breakTitle")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
+                    {settingsDraft.breakTitle.map((title, index) => (
+                        <React.Fragment key={index}>
+                            <InputGroup
+                                id="break-title"
+                                value={title}
+                                onChange={handleTextChangeArray.bind(null, "breakTitle", index)}
+                                disabled={!settingsDraft.breaksEnabled}
+                            />
+                        </React.Fragment>
+                    ))}
+                    <Button icon="plus" minimal onClick={() => addTitleMessage("breakTitle")} />
+                    <Button icon="minus" minimal onClick={() => removeMessage("breakTitle")} />
+
                   </FormGroup>
                   <FormGroup label="Break message">
-                    <InputGroup
-                      id="break-message"
-                      value={settingsDraft.breakMessage}
-                      onChange={handleTextChange.bind(null, "breakMessage")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
+                    {settingsDraft.breakMessage.map((title, index) => (
+                        <React.Fragment key={index}>
+                            <InputGroup
+                                id="break-message"
+                                value={title}
+                                onChange={handleTextChangeArray.bind(null, "breakMessage", index)}
+                                disabled={!settingsDraft.breaksEnabled}
+                            />
+                        </React.Fragment>
+                    ))}
+                    <Button icon="plus" minimal onClick={() => addTitleMessage("breakMessage")} />
+                    <Button icon="minus" minimal onClick={() => removeMessage("breakMessage")} />
                   </FormGroup>
                   <Button
                     onClick={() =>
